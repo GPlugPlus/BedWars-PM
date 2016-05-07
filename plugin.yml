@@ -1,5 +1,12 @@
 name: Bedwars
+version: 2.2
+api: 1.14.0
 main: Bluplayz\Bedwars
 author: Bluplayz
-version: 1.0
-api: 1.13.0
+website: http://youtube.com/Bluplayz
+commands:
+    Bedwars:
+        description: Bedwars Main Command
+        aliases: [bw]
+    Start:
+        description: Bedwars Forcestart Command
