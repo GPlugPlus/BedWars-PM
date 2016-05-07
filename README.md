@@ -14,4 +14,4 @@ Plugin Bedwars ist Fertig, falls ihr mich unterstützen wollt dann würde ich mi
 
 
 
-Externerlink: phytonpe.de/index.php/downloads
+Externerlink: http://phytonpe.de/index.php/downloads/
