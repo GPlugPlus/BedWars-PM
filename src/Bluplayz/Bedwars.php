@@ -252,7 +252,6 @@ class Bedwars extends PluginBase implements Listener {
         $teamcount = 0;
         $teamcount2 = 0;
         foreach($availableTeams as $team){
-
             if(count($array) == 0){
                 $array[] = $team;
             } else {
@@ -620,6 +619,9 @@ class Bedwars extends PluginBase implements Listener {
         if($damage == 7){
             return "GRAY";
         }
+        return "WHITE";
+    }
+    public function getTeamByBed(Block $block){
         return "WHITE";
     }
     public function openShop(Player $player){
@@ -1280,6 +1282,7 @@ class Bedwars extends PluginBase implements Listener {
 
             $config = new Config($this->getDataFolder() . "Arenas/" . $arena . ".yml", Config::YAML);
 
+            $team = $this->getTeamByBed($block);
             $team = $this->getTeamByBlockDamage($block2->getDamage());
 
             if($config->get("Status") != "Lobby"){
@@ -1334,11 +1337,14 @@ class Bedwars extends PluginBase implements Listener {
             $this->registerBed = false;
 
             $config = new Config($this->getDataFolder()."Arenas/".$arena.".yml", Config::YAML);
-
-            $config->setNested("Bed.".$team.".Welt", $block->getLevel()->getName());
-            $config->setNested("Bed.".$team.".X", $block->getX());
-            $config->setNested("Bed.".$team.".Y", $block->getY());
-            $config->setNested("Bed.".$team.".Z", $block->getZ());
+            
+            $block = $event->getBlock();
+            $block2 = null;
+            
+            
+            $bedarray = array(array($block->getX(), $block->getY(), $block->getZ()), array($block2->getX(), $block2->getY(), $block2->getZ()));
+            
+            $config->setNested("Bed.".$team.".Daten", $bedarray);
             $config->setNested("Bed.".$team.".Alive", true);
 
             $config->save();
