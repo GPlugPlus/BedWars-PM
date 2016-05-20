@@ -6,7 +6,6 @@ use pocketmine\block\Block;
 use pocketmine\Command\Command;
 use pocketmine\Command\CommandSender;
 use pocketmine\entity\Entity;
-use pocketmine\entity\Villager;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -19,13 +18,11 @@ use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\player\PlayerItemHeldEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\inventory\ChestInventory;
 use pocketmine\item\Item;
-use pocketmine\level\format\FullChunk;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
@@ -252,6 +249,7 @@ class Bedwars extends PluginBase implements Listener {
         $teamcount = 0;
         $teamcount2 = 0;
         foreach($availableTeams as $team){
+
             if(count($array) == 0){
                 $array[] = $team;
             } else {
@@ -621,9 +619,6 @@ class Bedwars extends PluginBase implements Listener {
         }
         return "WHITE";
     }
-    public function getTeamByBed(Block $block){
-        return "WHITE";
-    }
     public function openShop(Player $player){
 
         $chestBlock = new \pocketmine\block\Chest();
@@ -668,7 +663,7 @@ class Bedwars extends PluginBase implements Listener {
             new FloatTag("", 0)
         ]);
 
-        $nbt->Health = new ShortTag("Health", 10);
+        $nbt->Health = new ShortTag("Health", 20);
         $nbt->CustomName = new StringTag("CustomName", TextFormat::GOLD."SHOP");
         $nbt->CustomNameVisible = new ByteTag("CustomNameVisible", 1);
 
@@ -814,6 +809,34 @@ class Bedwars extends PluginBase implements Listener {
         }
         $p->sendPopup($popup);
     }
+    public function getTeamByBed($arena, Block $block){
+
+        foreach($this->getTeams($arena) as $team){
+            $config = new Config($this->getDataFolder()."Arenas/".$arena.".yml", Config::YAML);
+
+            $x = $config->getNested("Bed.".$team.".X");
+            $y = $config->getNested("Bed.".$team.".Y");
+            $z = $config->getNested("Bed.".$team.".Z");
+
+            $x2 = $config->getNested("Bed.".$team.".X2");
+            $y2 = $config->getNested("Bed.".$team.".Y2");
+            $z2 = $config->getNested("Bed.".$team.".Z2");
+
+            $x3 = $block->getX();
+            $y3 = $block->getY();
+            $z3 = $block->getZ();
+
+            if($x == $x3 && $y == $y3 && $z == $z3){
+                return $team;
+            }
+            if($x2 == $x3 && $y2 == $y3 && $z2 == $z3){
+                return $team;
+            }
+
+        }
+
+        return "WHITE";
+    }
     ############################################################################################################
     ############################################################################################################
     ############################################################################################################
@@ -821,7 +844,6 @@ class Bedwars extends PluginBase implements Listener {
     ############################################################################################################
     ############################################################################################################
     ############################################################################################################
-
     public function onTransaction(InventoryTransactionEvent $event)
     {
         $trans = $event->getTransaction()->getTransactions();
@@ -1282,8 +1304,7 @@ class Bedwars extends PluginBase implements Listener {
 
             $config = new Config($this->getDataFolder() . "Arenas/" . $arena . ".yml", Config::YAML);
 
-            $team = $this->getTeamByBed($block);
-            $team = $this->getTeamByBlockDamage($block2->getDamage());
+            $team = $this->getTeamByBed($arena, $block);
 
             if($config->get("Status") != "Lobby"){
 
@@ -1337,14 +1358,29 @@ class Bedwars extends PluginBase implements Listener {
             $this->registerBed = false;
 
             $config = new Config($this->getDataFolder()."Arenas/".$arena.".yml", Config::YAML);
-            
-            $block = $event->getBlock();
-            $block2 = null;
-            
-            
-            $bedarray = array(array($block->getX(), $block->getY(), $block->getZ()), array($block2->getX(), $block2->getY(), $block2->getZ()));
-            
-            $config->setNested("Bed.".$team.".Daten", $bedarray);
+
+            $block2 = new Block(26);
+
+            if ($player->getLevel()->getBlock(new Vector3($block->getX() + 1, $block->getY(), $block->getZ()))->getId() == 26) {
+                $block2 = $player->getLevel()->getBlock(new Vector3($block->getX() + 1, $block->getY(), $block->getZ()));
+            }
+            if ($player->getLevel()->getBlock(new Vector3($block->getX() - 1, $block->getY(), $block->getZ()))->getId() == 26) {
+                $block2 = $player->getLevel()->getBlock(new Vector3($block->getX() - 1, $block->getY(), $block->getZ()));
+            }
+            if ($player->getLevel()->getBlock(new Vector3($block->getX(), $block->getY(), $block->getZ() + 1))->getId() == 26) {
+                $block2 = $player->getLevel()->getBlock(new Vector3($block->getX(), $block->getY(), $block->getZ() + 1));
+            }
+            if ($player->getLevel()->getBlock(new Vector3($block->getX(), $block->getY(), $block->getZ() - 1))->getId() == 26) {
+                $block2 = $player->getLevel()->getBlock(new Vector3($block->getX(), $block->getY(), $block->getZ() - 1));
+            }
+
+            $config->setNested("Bed.".$team.".Welt", $block->getLevel()->getName());
+            $config->setNested("Bed.".$team.".X", $block->getX());
+            $config->setNested("Bed.".$team.".Y", $block->getY());
+            $config->setNested("Bed.".$team.".Z", $block->getZ());
+            $config->setNested("Bed.".$team.".X2", $block2->getX());
+            $config->setNested("Bed.".$team.".Y2", $block2->getY());
+            $config->setNested("Bed.".$team.".Z2", $block2->getZ());
             $config->setNested("Bed.".$team.".Alive", true);
 
             $config->save();
@@ -1432,15 +1468,27 @@ class Bedwars extends PluginBase implements Listener {
         if($cmd->getName() == "Bedwars" && $sender->isOP()){
             if(!empty($args[0])){
                 if(strtolower($args[0]) == "help" && $sender->isOP()){
-                    $sender->sendMessage(TextFormat::GRAY."===============");
+                    $sender->sendMessage(TextFormat::GRAY."======================");
                     $sender->sendMessage(TextFormat::GRAY."-> ".TextFormat::DARK_AQUA."/bw help ".TextFormat::GRAY."[".TextFormat::RED."Zeigt alle Bedwars Commands an".TextFormat::GRAY."]");
+                    $sender->sendMessage(TextFormat::GRAY."-> ".TextFormat::DARK_AQUA."/bw start ".TextFormat::GRAY."[".TextFormat::RED."setzt den Countdown in der Lobby auf 5".TextFormat::GRAY."]");
                     $sender->sendMessage(TextFormat::GRAY."-> ".TextFormat::DARK_AQUA."/bw regsign <Arena> ".TextFormat::GRAY."[".TextFormat::RED."Registriert ein Arenen Schild".TextFormat::GRAY."]");
                     $sender->sendMessage(TextFormat::GRAY."-> ".TextFormat::DARK_AQUA."/bw savemaps <Arena> ".TextFormat::GRAY."[".TextFormat::RED."Sichert alle Welten einer Arena".TextFormat::GRAY."]");
                     $sender->sendMessage(TextFormat::GRAY."-> ".TextFormat::DARK_AQUA."/bw addarena <ArenaName> <Teams> <SpielerProTeam> ".TextFormat::GRAY."[".TextFormat::RED."Fügt eine neue Arena hinzu".TextFormat::GRAY."]");
                     $sender->sendMessage(TextFormat::GRAY."-> ".TextFormat::DARK_AQUA."/bw setlobby <Arena>".TextFormat::GRAY."[".TextFormat::RED."setzt die Arena Lobby".TextFormat::GRAY."]");
                     $sender->sendMessage(TextFormat::GRAY."-> ".TextFormat::DARK_AQUA."/bw setspawn <Arena> <Team>".TextFormat::GRAY."[".TextFormat::RED."setzt die Team Spawns".TextFormat::GRAY."]");
                     $sender->sendMessage(TextFormat::GRAY."-> ".TextFormat::DARK_AQUA."/bw setbed <Arena> <Team>".TextFormat::GRAY."[".TextFormat::RED."setzt die Team Betten".TextFormat::GRAY."]");
-                    $sender->sendMessage(TextFormat::GRAY."===============");
+                    $sender->sendMessage(TextFormat::GRAY."======================");
+                }
+                elseif(strtolower($args[0]) == "start") {
+                    if ($sender->isOp() || $sender->hasPermission("bw.forcestart")){
+                        if ($this->inArena($sender)) {
+                            $arena = $this->getArena($sender);
+                            $config = new Config($this->getDataFolder() . "Arenas/" . $arena . ".yml", Config::YAML);
+                            $config->set("LobbyTimer", 5);
+                            $config->save();
+                            $sender->sendMessage(TextFormat::DARK_PURPLE."Forcestart!");
+                        }
+                    }
                 }
                 elseif(strtolower($args[0]) == "regsign" && $sender->isOP()){
                     if(!empty($args[1])) {
@@ -1558,8 +1606,18 @@ class Bedwars extends PluginBase implements Listener {
                         $sender->sendMessage(TextFormat::RED."/bw setspawn <ArenaName> <Team>");
                     }
                 }
-                elseif(strtolower($args[0]) == "test" && $sender->isOP()){
-                    $this->createVillager($sender->getX(), $sender->getY(), $sender->getZ(), $sender->getLevel());
+                elseif(strtolower($args[0]) == "leave" && $sender->isOP()){
+                    if($this->inArena($sender)){
+                        $arena = $this->getArena($sender);
+                        $this->removePlayerFromArena($arena, $sender->getName());
+                        $sender->teleport($this->getServer()->getDefaultLevel()->getSafeSpawn());
+                        $sender->setFood(20);
+                        $sender->setHealth(20);
+                        $sender->getInventory()->clearAll();
+                        $sender->removeAllEffects();
+                        $sender->setExpLevel(0);
+                        $sender->setNameTag($sender->getName());
+                    }
                 } else {
                     $this->getServer()->dispatchCommand($sender, "bw help");
                 }
