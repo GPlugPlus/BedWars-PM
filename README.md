@@ -10,8 +10,8 @@ Plugin Bedwars ist Fertig, falls ihr mich unterstützen wollt dann würde ich mi
 
 
 
-- MCPE 0.14.3  Last tested
+- MCPE 0.15.2  Last tested
 
 
 
-Externerlink: http://phytonpe.de/index.php/downloads/
+Externerlink: -
