@@ -1606,7 +1606,7 @@ class Bedwars extends PluginBase implements Listener {
                         $sender->sendMessage(TextFormat::RED."/bw setspawn <ArenaName> <Team>");
                     }
                 }
-                elseif(strtolower($args[0]) == "leave" && $sender->isOP()){
+                elseif(strtolower($args[0]) == "leave"){
                     if($this->inArena($sender)){
                         $arena = $this->getArena($sender);
                         $this->removePlayerFromArena($arena, $sender->getName());
@@ -1637,7 +1637,7 @@ class Bedwars extends PluginBase implements Listener {
 ############################################################################################################
 class BWRefreshSigns extends PluginTask {
 
-    public $prefix = "";
+    public $prefix;
     public $plugin;
 
     public function __construct(Bedwars $plugin) {
