@@ -4,11 +4,13 @@ api:
 - 1.14.0
 - 2.0.0
 main: Bluplayz\Bedwars
-author: Bluplayz
+author: 
+ - Bluplayz
+ - MrKiAN
 website: http://youtube.com/Bluplayz
 commands:
     Bedwars:
         description: Bedwars Main Command
-        aliases: [bw]
+        aliases: [BW]
     Start:
         description: Bedwars Forcestart Command
