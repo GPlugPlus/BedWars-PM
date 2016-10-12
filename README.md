@@ -1,4 +1,4 @@
-# BesWars-PM
+# BedWars-PM
 
 ###Plug Based On BluPlayz/BedWarsPE
 
@@ -6,4 +6,4 @@
 **Last Test:**
 0.15.2
 
-##This Plug Is Not Downed!
+##This Plug Is Not Doned!
