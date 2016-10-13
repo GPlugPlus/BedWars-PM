@@ -1,9 +1,9 @@
-name: Bedwars
+name: BedWars
 version: 2.3
 api:
 - 1.14.0
 - 2.0.0
-main: Bluplayz\Bedwars
+main: MrKiAN\Bedwars
 author: 
  - Bluplayz
  - MrKiAN
