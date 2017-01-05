@@ -3,14 +3,14 @@ version: 2.3
 api:
 - 1.14.0
 - 2.0.0
+- 2.2.0
 main: GPlug\Bedwars
 author: 
  - Bluplayz
  - MrKiAN
-website: http://youtube.com/Bluplayz
 commands:
     Bedwars:
         description: Bedwars Main Command
-        aliases: [BW]
+        aliases: [BW-PM]
     Start:
         description: Bedwars Forcestart Command
