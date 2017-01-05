@@ -109,6 +109,9 @@ class Bedwars extends PluginBase implements Listener {
         $this->breakableblocks = $cfg->get("BreakableBlocks");
         $shop = new Config($this->getDataFolder()."shop.yml", Config::YAML);
 
+        ###Shop: ↓↓###
+        ###Remember To Edit ID's###
+        
         if ($shop->get("Shop") == null) {
                 $shop->set("Shop", array(
                     Item::WOODEN_SWORD,
