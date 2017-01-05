@@ -1,6 +1,6 @@
 <?php
 
-namespace Bluplayz;
+namespace GPlug;
 
 use pocketmine\block\Block;
 use pocketmine\Command\Command;
